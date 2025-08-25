@@ -5,7 +5,8 @@
 // -----------------------------------------------------------------------------
 //  ENGLISH: Systematic point cloud validation against Swisstopo reference data
 //  DEUTSCH: Systematische Punktwolken-Validierung gegen Swisstopo-Referenzdaten
-//
+//  Author: Jan Sigrist (Bimatic GmbH) - www.bimatic.ch
+
 //  FEATURES:
 //  - Systematic grid-based validation across entire point cloud bounding box
 //  - Official Swisstopo height API integration (api3.geo.admin.ch)

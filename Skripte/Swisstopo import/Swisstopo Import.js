@@ -1,8 +1,10 @@
 /// <reference path="C:/Program Files/Leica Geosystems/Cyclone 3DR/Script/JsDoc/Reshaper.d.ts"/>
 
 // -----------------------------------------------------------------------------
-//  GridHeightFromSwisstopo.js – v1.6 (2025-01-XX)
+//  GridHeightFromSwisstopo.js – v1.0 (2025-08-25)
 // -----------------------------------------------------------------------------
+//  Author: Jan Sigrist (Bimatic GmbH) - www.bimatic.ch
+//
 //  ENGLISH:
 //  * Creates grid points within a closed polyline boundary
 //  * Retrieves LV95 heights synchronously via Curl (compatible with all 3DR versions)
