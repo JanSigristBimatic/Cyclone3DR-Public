@@ -11,8 +11,8 @@ This script performs systematic grid-based validation of point cloud heights aga
 - **Systematic Grid Validation**: Automated grid-based sampling across entire point cloud bounding box
 - **Official Swisstopo Integration**: Direct API connection to `api3.geo.admin.ch` for reference heights
 - **Intelligent Ground Detection**: Advanced cylinder-based point extraction with median approximation
-- **Professional Labeling**: Comprehensive labels with tolerance visualization and organized grouping
-- **Detailed CSV Reports**: Statistical analysis with configurable export options
+- **Professional Labeling**: Comprehensive 5-row labels with tolerance visualization and organized grouping
+- **Detailed CSV Reports**: Statistical analysis with configurable export options including fallback mechanisms
 - **Robust Error Handling**: Multiple fallback strategies ensure reliable operation
 
 ## 🛠️ Requirements
@@ -36,14 +36,14 @@ This script performs systematic grid-based validation of point cloud heights aga
    - **Search Radius**: Cylinder radius for point extraction (default: 1m)
    - **Error Threshold**: Maximum allowed deviation (default: 1m)
    - **Create All Labels**: Generate labels for all points or errors only
-   - **Generate Report**: Enable detailed CSV export
+   - **Generate Report**: Enable detailed CSV export with multiple save options
 
 ### 3. Results
 The script produces:
-- **Validation Labels**: Color-coded labels showing deviations
+- **Validation Labels**: Color-coded 5-row labels showing complete validation data
 - **Statistical Summary**: Console output with validation counts
-- **CSV Report**: Detailed analysis file (optional)
-- **Organized Groups**: Labels sorted by classification (OK/ERROR)
+- **CSV Report**: Detailed analysis file with fallback save mechanisms
+- **Organized Groups**: Labels sorted by classification (OK/ERROR/NO_DATA/API_FAILED)
 
 ## 📊 Output Classifications
 
@@ -61,9 +61,9 @@ The script produces:
 1. **Grid Generation**: Creates systematic validation points across bounding box
 2. **Reference Height Query**: Retrieves official heights via Swisstopo REST API
 3. **Point Cloud Sampling**: Uses centered cylinders for robust ground detection
-4. **Height Calculation**: Median approximation of lower 25% points for accuracy
+4. **Height Calculation**: Weighted average with median approximation of lower 25% points for accuracy
 5. **Comparison & Classification**: Configurable tolerance-based validation
-6. **Documentation**: Professional labels and comprehensive reporting
+6. **Documentation**: Professional 5-row labels and comprehensive reporting
 
 ### API Integration
 ```javascript
@@ -72,25 +72,25 @@ https://api3.geo.admin.ch/rest/services/height?easting={E}&northing={N}&sr=2056&
 ```
 
 ### Ground Detection Method
-- **Primary Method**: Median approximation using iterative cylinder approach
-- **Fallback Method**: Lower quartile calculation (25% from minimum)
-- **Performance Limit**: Handles complex scenes efficiently
+- **Primary Method**: Median approximation using iterative cylinder approach for lower 25% of points
+- **Fallback Method**: Simple average for small height variations
+- **Search Strategy**: Fixed 5m vertical search height centered around reference elevation
+- **Weighting**: Results weighted by point count when multiple clouds contribute
 
 ## 📄 Label Information
 
-Each validation label contains:
-- **Row 0**: Measured height from point cloud
-- **Row 1**: Swisstopo reference height
-- **Row 2**: Height difference (deviation)
-- **Row 3**: Point ID for traceability
-- **Row 4**: Grid coordinates (Easting, Northing)
+Each validation label contains 5 rows with comprehensive data:
+- **Row 0**: Measured height from point cloud (Code 1)
+- **Row 1**: Swisstopo reference height (Code 2)
+- **Row 2**: Height difference/deviation (Code 3) - **Primary measurement**
+- **Row 3**: Point ID for traceability (Code 4)
+- **Row 4**: Grid coordinates - Easting, Northing (Codes 5)
 
-### Label Codes
-- `1` = Measured height
-- `2` = Swisstopo reference
-- `3` = Deviation
-- `4` = Point ID
-- `5` = Coordinates
+### Label Features
+- **Enhanced Comments**: Include classification and deviation in label name
+- **Dynamic Tolerances**: ERROR points use stricter tolerance, OK points use warning threshold
+- **Group Organization**: Automatic sorting into classification-based groups
+- **Fallback System**: Robust 3-row basic labels if enhanced labels fail
 
 ## 📈 CSV Report Format
 
@@ -107,20 +107,25 @@ Each validation label contains:
 | Search_Radius_m | Search parameter | m |
 | Error_Threshold_m | Tolerance parameter | m |
 
+### CSV Export Options
+1. **User Dialog**: Standard save dialog for user-selected location
+2. **Temp Directory**: Automatic fallback with timestamp
+3. **Console Output**: Last resort for manual copy-paste
+
 ## ⚙️ Configuration Parameters
 
 ### Grid Spacing (2-100m)
-- **Small values (2-5m)**: Detailed analysis, more processing time
-- **Medium values (10-25m)**: Balanced approach (recommended)
+- **Small values (2-10m)**: Detailed analysis, more processing time
+- **Medium values (15-25m)**: Balanced approach (recommended)
 - **Large values (50-100m)**: Overview analysis, faster processing
 
 ### Search Radius (0.05-5m)
-- **Small radius (0.1-0.5m)**: Precise point sampling
+- **Small radius (0.1-0.5m)**: Precise point sampling (recommended for high-quality data)
 - **Medium radius (1-2m)**: Standard terrain analysis
 - **Large radius (3-5m)**: Rough terrain or sparse data
 
 ### Error Threshold (0.02-10m)
-- **Strict (0.02-0.1m)**: High precision surveys
+- **Strict (0.02-0.5m)**: High precision surveys (recommended for quality control)
 - **Standard (0.5-2m)**: General validation
 - **Lenient (5-10m)**: Rough terrain assessment
 
@@ -141,6 +146,10 @@ Each validation label contains:
 - Check if point cloud covers the validation area
 - Verify coordinate system alignment
 
+**"Label creation failed"**
+- Script automatically falls back to basic 3-row labels
+- Check console for specific error messages
+
 **Performance issues**
 - Reduce grid density (increase spacing)
 - Limit validation area
@@ -153,6 +162,14 @@ Each validation label contains:
 3. **Validate coordinate system** before processing
 4. **Check sample results** before full validation
 5. **Save reports** for documentation and analysis
+6. **Monitor console output** for detailed processing information
+
+## 📋 Version & Compatibility
+
+- **Script Version**: 1.0 (2025-08-25)
+- **Cyclone 3DR**: 2025.1.4 or newer required
+- **Author**: Jan Sigrist (Bimatic GmbH) - www.bimatic.ch
+- **Platform**: Windows with curl support
 
 ## 📋 License & Attribution
 
@@ -163,7 +180,3 @@ Each validation label contains:
 - **Platform**: Leica Cyclone 3DR
 
 ---
-
-**Version**: 1.2 (2025-08-25)  
-**Compatibility**: Cyclone 3DR 2025.1.4+  
-**Author**: Professional surveying automation
